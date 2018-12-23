@@ -7,7 +7,7 @@
  *
  * Copyright (c) 2005 James F <tyranid@gmail.com>
  *
- * $HeadURL: http://psp.jim.sh/svn/psp/trunk/psplinkusb/psplink/debug.h $
+ * $HeadURL: svn://svn.ps2dev.org/psp/trunk/psplinkusb/psplink/debug.h $
  * $Id: debug.h 2178 2007-02-15 17:30:31Z tyranid $
  */
 #ifndef __DEBUGINC_H__

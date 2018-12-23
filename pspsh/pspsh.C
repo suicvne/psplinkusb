@@ -7,7 +7,7 @@
  *
  * Copyright (c) 2006 James F <tyranid@gmail.com>
  *
- * $HeadURL: http://psp.jim.sh/svn/psp/trunk/psplinkusb/pspsh/pspsh.C $
+ * $HeadURL: svn://svn.ps2dev.org/psp/trunk/psplinkusb/pspsh/pspsh.C $
  * $Id: pspsh.C 2200 2007-03-08 21:21:20Z tyranid $
  */
 #include <stdio.h>
@@ -937,7 +937,9 @@ char** shell_completion(const char *text, int start, int end)
 	{
 		if(strchr(text, '.') || strchr(text, '/'))
 		{
+			#ifndef __APPLE__
 			rl_completion_display_matches_hook = completion_display;
+			#endif
 			matches = rl_completion_matches(text, filename_gen);
 		}
 		else
@@ -947,7 +949,9 @@ char** shell_completion(const char *text, int start, int end)
 	}
 	else
 	{
+		#ifndef __APPLE__
 		rl_completion_display_matches_hook = completion_display;
+		#endif
 		if(text[0] == '@')
 		{
 			matches = rl_completion_matches(text, uid_gen);

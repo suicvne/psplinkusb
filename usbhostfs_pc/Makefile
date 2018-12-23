@@ -1,7 +1,7 @@
 OUTPUT=usbhostfs_pc
-OBJS=main.o 
-LIBS=-lpthread
-CFLAGS=-Wall -ggdb -DPC_SIDE -D_FILE_OFFSET_BITS=64 -I. -O2 -I../usbhostfs -Wno-format
+OBJS=main.o
+LIBS=-lusb -lpthread
+CFLAGS=-Wall -ggdb -I../usbhostfs -DPC_SIDE -D_FILE_OFFSET_BITS=64 -I. -O2
 LDFLAGS=-L.
 
 PREFIX=$(shell psp-config --pspdev-path 2> /dev/null)
@@ -12,14 +12,6 @@ endif
 
 ifdef NO_UID_CHECK
 CFLAGS += -DNO_UID_CHECK
-endif
-
-ifdef WINUSB_DEVICE
-OBJS += device_winusb.o
-LIBS += -lsetupapi
-else
-OBJS += device_libusb.o
-LIBS += -lusb
 endif
 
 ifdef READLINE_SHELL

@@ -7,8 +7,8 @@
  *
  * Copyright (c) 2006 James F <tyranid@gmail.com>
  *
- * $HeadURL: http://psp.jim.sh/svn/psp/trunk/psplinkusb/usbgdb/main.c $
- * $Id: main.c 2455 2009-03-03 22:01:23Z jim $
+ * $HeadURL: svn://svn.ps2dev.org/psp/trunk/psplinkusb/usbgdb/main.c $
+ * $Id: main.c 2179 2007-02-15 17:38:02Z tyranid $
  */
 #include <pspkernel.h>
 #include <pspdebug.h>
@@ -16,6 +16,7 @@
 #include <pspsdk.h>
 #include <pspctrl.h>
 #include <psppower.h>
+#include <pspsyscon.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,7 +25,6 @@
 #include <util.h>
 #include <usbhostfs.h>
 #include <usbasync.h>
-#include <pspsysmem_kernel.h>
 #include "common.h"
 
 PSP_MODULE_INFO("GDBServer", PSP_MODULE_KERNEL, 1, 1);
@@ -35,15 +35,24 @@ struct AsyncEndpoint g_endp;
 DebugEventHandler g_handler;
 struct GdbContext g_context;
 SceUID g_thid = -1;
-unsigned int userbase = 0x08800000;
-unsigned int usertop =  0x0A000000;
+
+int g_userend; // End address of the user memory
+
+u32 sceSyscon_driver_E7E87741(u32 *pommel); //sceSysconGetPommelVersion
+
+u32 sceSysconGetPommelVersion(u32 *pommel)
+{
+	int k1 = pspSdkSetK1(0);
+	int err = sceSyscon_driver_E7E87741(pommel);
+	pspSdkSetK1(k1);
+	return err;
+}
 
 int initialise(SceSize args, void *argp)
 {
 	int len;
 	int fd;
 	Elf32_Ehdr hdr;
-	PspSysmemPartitionInfo info;
 
 	memset(&g_context, 0, sizeof(g_context));
 	if(argp == NULL)
@@ -62,14 +71,6 @@ int initialise(SceSize args, void *argp)
 	g_context.argp = argp;
 	g_context.args = args;
 
-	memset(&info, 0, sizeof(info));
-	info.size = sizeof(info);
-	if(sceKernelQueryMemoryPartitionInfo(2, &info) == 0)
-	{
-	    userbase = info.startaddr;
-	    usertop = info.startaddr + info.memsize;
-	}
-	
 	fd = sceIoOpen((char*) argp, PSP_O_RDONLY, 0777);
 	if(fd < 0)
 	{
@@ -122,6 +123,15 @@ int initialise(SceSize args, void *argp)
 	g_context.ctx.regs.cause = 9 << 2;
 
 	printf("Loaded %s - UID 0x%08X, Entry 0x%08X\n", (char*)argp, g_context.uid, g_context.info.entry_addr);
+        
+        int t_pommel;
+        
+        int t_result = sceSysconGetPommelVersion(&t_pommel);
+        
+        if ((t_pommel >= 0x123) && (t_result == 0)) // If PSP 2000 or newer allow 64MB to be peeked and poked instead of 32MB
+            g_userend = 0x0C000000;
+        else
+            g_userend = 0x0A000000;
 
 	return 1;
 }
@@ -137,7 +147,8 @@ int GdbReadByte(unsigned char *address, unsigned char *dest)
 	nibble = addr >> 28;
 	addr &= 0x0FFFFFFF;
 
-	if((addr >= userbase) && (addr < usertop))
+
+	if((addr >= 0x08800000) && (addr < g_userend))
 	{
 		if((nibble == 0) || (nibble == 4) || (nibble == 8) || (nibble == 10))
 		{
@@ -172,7 +183,7 @@ int GdbWriteByte(char val, unsigned char *dest)
 	nibble = addr >> 28;
 	addr &= 0x0FFFFFFF;
 
-	if((addr >= userbase) && (addr < usertop))
+	if((addr >= 0x08800000) && (addr < g_userend))
 	{
 		if((nibble == 0) || (nibble == 4) || (nibble == 8) || (nibble == 10))
 		{

@@ -8,7 +8,7 @@
  * Copyright (c) 2005 James F <tyranid@gmail.com>
  * Copyright (c) 2005 Julian T <lovely@crm114.net>
  *
- * $HeadURL: http://psp.jim.sh/svn/psp/trunk/psplinkusb/psplink/shell.c $
+ * $HeadURL: svn://svn.ps2dev.org/psp/trunk/psplinkusb/psplink/shell.c $
  * $Id: shell.c 2334 2007-11-03 16:47:05Z tyranid $
  */
 #include <pspkernel.h>

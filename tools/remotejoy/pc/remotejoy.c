@@ -7,7 +7,7 @@
  *
  * Copyright (c) 2006 James F <tyranid@gmail.com>
  *
- * $HeadURL: http://psp.jim.sh/svn/psp/trunk/psplinkusb/tools/remotejoy/pc/remotejoy.c $
+ * $HeadURL: svn://svn.ps2dev.org/psp/trunk/psplinkusb/tools/remotejoy/pc/remotejoy.c $
  * $Id: remotejoy.c 2398 2008-06-07 18:57:39Z iwn $
  */
 #include <stdio.h>

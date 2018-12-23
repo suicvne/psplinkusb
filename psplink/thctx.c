@@ -7,7 +7,7 @@
  *
  * Copyright (c) 2005 James F <tyranid@gmail.com>
  *
- * $HeadURL: http://psp.jim.sh/svn/psp/trunk/psplinkusb/psplink/thctx.c $
+ * $HeadURL: svn://svn.ps2dev.org/psp/trunk/psplinkusb/psplink/thctx.c $
  * $Id: thctx.c 2301 2007-08-26 13:48:05Z tyranid $
  */
 #include <pspkernel.h>
